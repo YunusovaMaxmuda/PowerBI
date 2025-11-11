@@ -1,0 +1,129 @@
+1. List three data sources Power BI can connect to.
+
+Excel files (.xlsx, .xls)
+
+SQL Server databases
+
+Web URLs or APIs
+
+(Power BI can also connect to SharePoint, Azure, JSON, PDF, and many more.)
+
+2. What is the first step to import data into Power BI Desktop?
+
+Open Power BI Desktop → Home tab → Get Data → Choose data source (e.g., CSV, Excel, SQL).
+Then browse and select the data file to connect.
+
+3. How do you refresh imported data in Power BI?
+
+In Power BI Desktop: Click Home → Refresh to reload updated source data.
+
+In Power BI Service: Schedule automatic refreshes if connected via a gateway.
+
+4. What file formats can Power BI import directly? (Name two.)
+
+.CSV (Comma Separated Values)
+
+.XLSX (Excel Workbook)
+Other examples: JSON, XML, TXT.
+
+5. What does the “Navigator” window show after selecting a data source?
+
+It displays:
+
+Available tables or sheets in the data source
+
+Data preview of the selected table
+
+Options to Load or Transform Data
+
+6. Import Sales_Data.csv and load only the “Product” and “Price” columns.
+
+Steps:
+
+Go to Home → Get Data → Text/CSV.
+
+Browse to Sales_Data.csv.
+
+In the Navigator window, click Transform Data.
+
+In Power Query, select only columns Product and Price.
+
+Click Close & Load.
+
+7. How would you change OrderDate to a date format during import?
+
+In Power Query Editor:
+
+Select the OrderDate column.
+
+Go to Transform → Data Type → Date.
+
+Confirm that the date format (e.g., M/D/YYYY) matches your system locale.
+
+8. What is the difference between “Load” and “Transform Data” in the import dialog?
+Option	Description
+Load	Imports data directly into Power BI without changes.
+Transform Data	Opens Power Query Editor to clean, filter, or reshape data before loading.
+9. Why might you see an error when connecting to a SQL database? (Name one reason.)
+
+Invalid server name or credentials
+
+Firewall restrictions blocking access
+
+Database permissions not granted to the user
+
+10. How do you replace a data source after importing it?
+
+Go to Home → Data Source Settings.
+
+Select the current source and click Change Source...
+
+Browse or enter the new path/server name.
+
+Click Apply Changes to update.
+
+11. Write the M-code to import only rows where Quantity > 1.
+let
+    Source = Csv.Document(File.Contents("C:\Data\Sales_Data.csv"), [Delimiter=",", Columns=5, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+    PromotedHeaders = Table.PromoteHeaders(Source, [PromoteAllScalars=true]),
+    ChangedType = Table.TransformColumnTypes(PromotedHeaders, {{"Quantity", Int64.Type}}),
+    FilteredRows = Table.SelectRows(ChangedType, each [Quantity] > 1)
+in
+    FilteredRows
+
+12. How would you change the data source if Sales_Data.csv changed?
+
+If the file path changes → use Data Source Settings → Change Source.
+
+If the structure changes (e.g., new columns) → open Power Query Editor and adjust column references or steps.
+
+13. Troubleshoot: Your CSV import fails due to a "mixed data type" error—how do you fix it?
+
+Open Power Query Editor.
+
+Convert the problematic column to a consistent data type (e.g., all numeric).
+
+Replace or remove invalid values (Transform → Replace Errors).
+
+14. Connect to a live SQL database with parameters (e.g., filter by year).
+
+Go to Home → Get Data → SQL Server.
+
+Enter server name and database.
+
+In Advanced options, enter a query such as:
+
+SELECT * FROM Sales WHERE YEAR(OrderDate) = 2023
+
+
+Click OK → Load.
+
+(You can also create Power Query parameters for year selection.)
+
+15. How would you automate data imports using Power BI and Power Automate?
+
+Use Power Automate (Flow) to trigger dataset refreshes automatically:
+
+Example: “When a file is updated in OneDrive → Refresh Power BI dataset.”
+
+This ensures up-to-date dashboards without manual refresh.
