@@ -1,0 +1,160 @@
+1. What is the purpose of the "Applied Steps" pane in Power Query?
+
+The Applied Steps pane (on the right side of Power Query Editor) lists every transformation you perform — such as removing columns, filtering, renaming, etc.
+
+Each step is recorded in order and can be edited, deleted, or reordered.
+➡️ It provides a clear audit trail of your data cleaning process.
+
+2. How do you remove duplicate rows in Power Query?
+
+Select the column(s) to check for duplicates.
+
+Go to Home → Remove Rows → Remove Duplicates.
+✅ Keeps only the first occurrence of each unique record.
+
+3. What does the "Filter" icon do in Power Query?
+
+Appears next to each column header.
+
+Allows you to filter rows based on specific values or conditions (e.g., “Price > 100”).
+➡️ Works similarly to Excel’s filter feature but applies at the query level.
+
+4. How would you rename a column from “CustID” to “CustomerID”?
+
+Method 1:
+Right-click the column header → Rename → Type “CustomerID”.
+
+Method 2 (M-code):
+
+Table.RenameColumns(Source, {{"CustID", "CustomerID"}})
+
+5. What happens if you click “Close & Apply” in Power Query?
+
+All transformations are applied to the dataset.
+
+The cleaned data is loaded into Power BI’s data model.
+➡️ Power Query closes, and the updated dataset becomes available for reporting.
+
+6. Remove all rows where Quantity is less than 2.
+
+Steps:
+
+Click filter icon on Quantity → Select “Number Filters → Greater than or equal to 2”.
+
+Click OK.
+
+M-code:
+
+Table.SelectRows(Source, each [Quantity] >= 2)
+
+7. Split the OrderDate column into separate "Year," "Month," and "Day" columns.
+
+Steps:
+
+Select OrderDate.
+
+Go to Add Column → Date → Year / Month / Day → Year, etc.
+
+M-code example:
+
+AddYear = Table.AddColumn(Source, "Year", each Date.Year([OrderDate])),
+AddMonth = Table.AddColumn(AddYear, "Month", each Date.Month([OrderDate])),
+AddDay = Table.AddColumn(AddMonth, "Day", each Date.Day([OrderDate]))
+
+8. Replace all “Mouse” entries in the Product column with “Computer Mouse.”
+
+Steps:
+
+Right-click the Product column → Replace Values.
+
+Find value: Mouse → Replace with: Computer Mouse.
+
+M-code:
+
+Table.ReplaceValue(Source, "Mouse", "Computer Mouse", Replacer.ReplaceText, {"Product"})
+
+9. Sort the table by OrderDate (newest first).
+
+Steps:
+
+Select OrderDate column.
+
+Click Sort Descending (↓ icon).
+
+M-code:
+
+Table.Sort(Source, {{"OrderDate", Order.Descending}})
+
+10. How would you handle null values in the Price column?
+
+Options:
+
+Replace nulls with a default value → Transform → Replace Values → null → 0
+
+Remove null rows → Home → Remove Rows → Remove Blank Rows
+
+M-code (replace nulls with 0):
+
+Table.ReplaceValue(Source, null, 0, Replacer.ReplaceValue, {"Price"})
+
+11. Write custom M-code to add a column calculating TotalSpent = Quantity * Price.
+
+Steps:
+
+Go to Add Column → Custom Column
+
+Enter formula: [Quantity] * [Price]
+
+M-code:
+
+Table.AddColumn(Source, "TotalSpent", each [Quantity] * [Price])
+
+12. Group the table by CustID to show total spending per customer.
+
+Steps:
+
+Go to Home → Group By.
+
+Group by: CustID
+
+New column name: TotalSpent → Operation: Sum → Column: TotalSpent
+
+M-code:
+
+Table.Group(Source, {"CustID"}, {{"TotalSpent", each List.Sum([TotalSpent]), type number}})
+
+13. Fix inconsistent date formats (e.g., 01/10/2023 vs. 2023-01-10) in OrderDate.
+
+Steps:
+
+Select OrderDate → Transform → Data Type → Date.
+
+If dates are stored as text, use Transform → Using Locale to apply the correct format.
+
+M-code:
+
+Table.TransformColumnTypes(Source, {{"OrderDate", type date}})
+
+14. Create a conditional column: Label orders as “High Value” if Price > 100.
+
+Steps:
+
+Go to Add Column → Conditional Column.
+
+If [Price] > 100, then “High Value”, else “Regular”.
+
+M-code:
+
+Table.AddColumn(Source, "OrderType", each if [Price] > 100 then "High Value" else "Regular")
+
+15. Optimize the query to reduce refresh time (e.g., remove unused columns early).
+
+Best Practices:
+
+Remove unnecessary columns immediately after import (Remove Columns step early).
+
+Avoid loading intermediate queries.
+
+Disable load for staging tables (right-click query → Uncheck Enable Load).
+
+Use Table.Buffer carefully for caching small datasets.
